@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Work Threads — Manifesto</title>
+    <meta
+      name="description"
+      content="Work happens with people, not in systems. The Work Threads manifesto."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #14181f;
+        --ink-soft: #3a4250;
+        --fog: #e8eef2;
+        --mist: #f3f6f8;
+        --paper: #fafbfc;
+        --line: rgba(20, 24, 31, 0.1);
+        --accent: #0b6e63;
+        --accent-deep: #085248;
+        --accent-wash: rgba(11, 110, 99, 0.12);
+        --tip-bg: #1a222c;
+        --tip-fg: #f2f5f7;
+        --font-display: "Syne", sans-serif;
+        --font-body: "Literata", Georgia, serif;
+        --max: 40rem;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-optical-sizing: auto;
+        font-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.3rem);
+        line-height: 1.7;
+        background:
+          radial-gradient(ellipse 90% 55% at 12% -10%, rgba(11, 110, 99, 0.14), transparent 55%),
+          radial-gradient(ellipse 70% 50% at 100% 0%, rgba(70, 110, 140, 0.12), transparent 50%),
+          radial-gradient(ellipse 60% 40% at 50% 100%, rgba(11, 110, 99, 0.08), transparent 45%),
+          linear-gradient(165deg, var(--mist) 0%, var(--fog) 45%, #e4ebe8 100%);
+        background-attachment: fixed;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.35;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
+        z-index: 0;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        width: min(100% - 2.5rem, 46rem);
+        margin: 0 auto;
+        padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(4rem, 10vw, 7rem);
+      }
+
+      .brand {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent-deep);
+        margin: 0 0 1.25rem;
+        opacity: 0;
+        animation: rise 0.9s ease forwards;
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(2.6rem, 2rem + 3vw, 4.25rem);
+        line-height: 0.98;
+        letter-spacing: -0.03em;
+        margin: 0 0 1.75rem;
+        max-width: 12ch;
+        opacity: 0;
+        animation: rise 0.9s ease 0.08s forwards;
+      }
+
+      .lede {
+        font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.65rem);
+        line-height: 1.45;
+        font-weight: 500;
+        color: var(--ink);
+        margin: 0 0 2.75rem;
+        max-width: 28ch;
+        opacity: 0;
+        animation: rise 0.9s ease 0.16s forwards;
+      }
+
+      .rule {
+        width: 3.5rem;
+        height: 3px;
+        background: var(--accent);
+        border: 0;
+        margin: 0 0 2.75rem;
+        opacity: 0;
+        animation: rise 0.9s ease 0.22s forwards;
+      }
+
+      article {
+        max-width: var(--max);
+        opacity: 0;
+        animation: rise 1s ease 0.28s forwards;
+      }
+
+      article p {
+        margin: 0 0 1.35rem;
+        color: var(--ink-soft);
+      }
+
+      article p strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .pull {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.85rem);
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin: 2.25rem 0;
+        padding-left: 1.1rem;
+        border-left: 3px solid var(--accent);
+      }
+
+      .close {
+        margin-top: 2.5rem;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      footer {
+        margin-top: 3.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--line);
+        font-family: var(--font-display);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        opacity: 0;
+        animation: rise 1s ease 0.4s forwards;
+      }
+
+      /* Highlighted keywords + floating tip */
+      .kw {
+        color: var(--accent-deep);
+        font-weight: 600;
+        cursor: help;
+        text-decoration: none;
+        background-image: linear-gradient(var(--accent-wash), var(--accent-wash));
+        background-repeat: no-repeat;
+        background-size: 100% 0.45em;
+        background-position: 0 88%;
+        border-bottom: 1.5px solid rgba(11, 110, 99, 0.45);
+        transition:
+          background-size 0.25s ease,
+          border-color 0.25s ease,
+          color 0.25s ease;
+      }
+
+      .kw:hover,
+      .kw:focus,
+      .kw:focus-visible,
+      .kw.is-active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+        background-size: 100% 100%;
+        outline: none;
+      }
+
+      #tip {
+        position: fixed;
+        z-index: 100;
+        width: min(22rem, calc(100vw - 2rem));
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.4rem;
+        background: var(--tip-bg);
+        color: var(--tip-fg);
+        font-family: var(--font-body);
+        font-size: 0.82rem;
+        font-weight: 400;
+        line-height: 1.45;
+        box-shadow: 0 10px 28px rgba(20, 24, 31, 0.22);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(0.25rem);
+        transition:
+          opacity 0.16s ease,
+          transform 0.16s ease,
+          visibility 0.16s;
+      }
+
+      #tip.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      #tip[data-placement="below"] {
+        transform: translateY(-0.25rem);
+      }
+
+      #tip.is-open[data-placement="below"] {
+        transform: translateY(0);
+      }
+
+      .hint {
+        margin: 0 0 2rem;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        opacity: 0;
+        animation: rise 0.9s ease 0.2s forwards;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(0.85rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+
+        .brand,
+        h1,
+        .lede,
+        .rule,
+        article,
+        footer,
+        .hint {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <p class="brand">Work Threads</p>
+      <h1>Manifesto</h1>
+      <p class="lede">Work happens with people, not in systems.</p>
+      <p class="hint">Hover underlined words for context</p>
+      <hr class="rule" />
+
+      <article>
+        <p>
+          In process-heavy organizations, the
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="The official trackers and artifacts used for audit, reporting, and governance — Jira tickets, SAFe stories, charge codes. Necessary, but rarely where work actually gets done."
+            >system of record</span
+          >
+          is disconnected from the
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Where conversations, debugging, decisions, and progress really happen — chat, huddles, side threads. This is where time is spent and problems are solved."
+            >system of work</span
+          >. Engineers lose hours to meetings, ticket writing, and chasing context across tools, while small but important work stalls waiting for ceremony.
+        </p>
+
+        <p>
+          Work isn’t encapsulated. It’s scattered across email, chat, boards, and status calls.
+        </p>
+
+        <p class="pull">
+          A
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="One object that holds conversation, tasks, status, and decisions together. Chat + checklists + state — fused, not bolted on. The workspace where work is born and finished."
+            >Work Thread</span
+          >
+          is the unit of work. Tickets and other artifacts are
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Optional outputs generated from the thread when another system needs a formal record. Threads are the workspace; tickets are exports."
+            >exports</span
+          >
+          — when you need them, not the starting point.
+        </p>
+
+        <p>
+          Most tools are
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Organized around projects, boards, required fields, and workflows. People are forced to reshape their work to fit the tool."
+            >system-focused</span
+          >. We are
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Organized around who needs to act and what needs to get done. The people in the room define the work; systems follow when asked."
+            >people-focused</span
+          >. Work starts with who belongs in the room and what needs to happen next — not with a blank ticket form.
+        </p>
+
+        <p>
+          You pull in people on a
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Invite only the people impacted by the work. No broadcasting into large channels or mandatory meetings just to keep everyone ‘informed.’"
+            >need-to-know</span
+          >
+          basis. Status, tasks, and decisions live where people already act. You keep total control over what leaves the thread: when something must land in GitLab, email,
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Standing systems your organization already runs — issue trackers, mail, time/payroll, HR, charge codes. Work Threads doesn’t replace them; you choose what to push out, and when."
+            >payroll</span
+          >, or any other system, you
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Consciously send a clean artifact from the thread into another system — only when effort, risk, audit, charging, or approval demands it."
+            >promote</span
+          >
+          it on your terms.
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Adapters that carry the minimum required information into existing tools. Integrations serve the thread; they don’t own the workflow."
+            >Integrations</span
+          >
+          are adapters, not the boss.
+        </p>
+
+        <p>
+          That cuts
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="The tax of standups, refinement, status chasing, and duplicated conversations — mostly caused by information not reaching the right people at the right time."
+            >coordination overhead</span
+          >, lowers the
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="How hard it is to start useful work. Fixing a build break or VPN issue shouldn’t require a full ticket lifecycle before anyone can move."
+            >activation energy</span
+          >
+          for real problems, and preserves
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="Searchable history of what happened, what was decided, and why — captured automatically in the thread, not copy-pasted into ticket comments later."
+            >institutional memory</span
+          >
+          without copy/paste. When governance truly matters, you create a
+          <span
+            class="kw"
+            tabindex="0"
+            data-tip="A formal Story, Bug, Enabler, or other audited record with the fields management needs — generated from the thread, not rewritten by hand."
+            >governed artifact</span
+          >
+          instead of pretending process doesn’t exist.
+        </p>
+
+        <p class="close">
+          Success is simple: people spend less time feeding systems, and more time finishing work — without losing traceability.
+        </p>
+      </article>
+
+      <footer>Threads are the workspaces. Everything else is optional output.</footer>
+    </main>
+
+    <div id="tip" role="tooltip"></div>
+
+    <script>
+      (function () {
+        const tip = document.getElementById("tip");
+        const keywords = document.querySelectorAll(".kw");
+        let active = null;
+
+        function hide() {
+          if (active) active.classList.remove("is-active");
+          active = null;
+          tip.classList.remove("is-open");
+          tip.textContent = "";
+        }
+
+        function show(el) {
+          const text = el.getAttribute("data-tip");
+          if (!text) return;
+
+          if (active && active !== el) active.classList.remove("is-active");
+          active = el;
+          el.classList.add("is-active");
+
+          tip.textContent = text;
+          tip.removeAttribute("data-placement");
+          tip.style.left = "0px";
+          tip.style.top = "0px";
+          tip.classList.add("is-open");
+
+          const gap = 10;
+          const rect = el.getBoundingClientRect();
+          const tipRect = tip.getBoundingClientRect();
+          let left = rect.left + rect.width / 2 - tipRect.width / 2;
+          left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+
+          let top = rect.top - tipRect.height - gap;
+          if (top < 8) {
+            top = rect.bottom + gap;
+            tip.setAttribute("data-placement", "below");
+          }
+
+          tip.style.left = left + "px";
+          tip.style.top = top + "px";
+        }
+
+        keywords.forEach((el) => {
+          el.setAttribute("aria-describedby", "tip");
+          el.addEventListener("mouseenter", () => show(el));
+          el.addEventListener("mouseleave", () => {
+            if (document.activeElement !== el) hide();
+          });
+          el.addEventListener("focus", () => show(el));
+          el.addEventListener("blur", hide);
+        });
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (active) show(active);
+          },
+          { passive: true },
+        );
+        window.addEventListener("resize", () => {
+          if (active) show(active);
+        });
+      })();
+    </script>
+  </body>
+</html>

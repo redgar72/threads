@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ThreadStatus {
+  OPEN
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  ARCHIVED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  participants      ThreadParticipant[]
+  messages          Message[]
+  assignedTasks     Task[]              @relation("TaskAssignee")
+  attachments       Attachment[]
+  gitlabConnection  GitLabConnection?
+}
+
+/// Linked GitLab identity for API calls (OAuth). Tokens are stored server-side.
+model GitLabConnection {
+  userId         String    @id
+  gitlabUserId   Int
+  username       String
+  accessToken    String
+  refreshToken   String?
+  expiresAt      DateTime?
+  scopes         String    @default("api read_user")
+  connectedAt    DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([gitlabUserId])
+}
+
+model Thread {
+  id        String       @id @default(cuid())
+  title     String
+  status    ThreadStatus @default(OPEN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  /// Linked private GitLab project for this thread (created via OAuth).
+  gitlabProjectId   Int?
+  gitlabProjectPath String?
+  gitlabProjectUrl  String?
+
+  /// Latest manually exported GitLab issue.
+  gitlabIssueIid Int?
+  gitlabIssueUrl String?
+
+  participants ThreadParticipant[]
+  messages     Message[]
+  tasks        Task[]
+  attachments  Attachment[]
+}
+
+model ThreadParticipant {
+  threadId String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  threadId  String
+  authorId  String
+  body      String   @default("")
+  createdAt DateTime @default(now())
+
+  thread      Thread       @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([threadId, createdAt])
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  threadId   String
+  messageId  String?
+  uploaderId String
+  filename   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  createdAt  DateTime @default(now())
+
+  thread   Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  message  Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  uploader User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([messageId])
+}
+
+model Task {
+  id         String   @id @default(cuid())
+  threadId   String
+  title      String
+  done       Boolean  @default(false)
+  assigneeId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  assignee User?  @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([threadId])
+  @@index([assigneeId])
+}
